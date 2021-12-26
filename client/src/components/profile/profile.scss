@@ -1,0 +1,79 @@
+.profile-main {
+  display: flex;
+  flex-direction: column;
+  // background: #f0f2f5;
+  // padding-bottom: 100px;
+
+  &__head {
+    height: 40px;
+    background: red;
+    border-bottom: 1px solid seashell;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+
+    h1 {
+      color: white;
+    }
+
+    .ant-space {
+      .ant-space-item {
+        button {
+          color: white;
+          font-size: 18px;
+
+          .anticon {
+            svg {
+              margin-bottom: .5rem;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    // background: #f0f2f5;
+  }
+
+  &__img {
+    img {
+      width: 160px;
+      height: 160px;
+    }
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__labelHeading {
+    font-size: 18px !important;
+    color: #333 !important;
+    font-weight: 1000 !important;
+  }
+
+  th,
+  td {
+    text-align: center;
+    text-transform: capitalize;
+  }
+
+  td {
+    font-size: 16px !important;
+  }
+
+  &__footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background: #f0f2f5;
+  }
+}

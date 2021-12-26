@@ -1,0 +1,86 @@
+@import '../../scss/brand_color';
+
+.welcome-main {
+  width: 100%;
+  color: $text;
+
+  .welcome-head {
+    $self: &;
+    height: 70px;
+    background: #FFCC66;
+    border-bottom: 1px solid seashell;
+    z-index: 1;
+
+    &__link {
+      &__list {
+        font-size: 16px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .welcome-logo {
+    .content {
+      $self: &;
+      height: 100px;
+
+      &__logo {
+        $self: &;
+
+        span {
+          font-size: 72px;
+          display: inline;
+        }
+
+        &--module {
+          span {
+            animation-iteration-count: 1 !important;
+          }
+
+        }
+      }
+
+      &__text {
+        font-size: 26px;
+      }
+    }
+  }
+
+  .welcome-page-content {
+    $self: &;
+    color: $text;
+
+    &__intro {
+      &__content {
+
+        h3,
+        h1 {
+          color: $text;
+        }
+      }
+
+
+      .p_box {
+        border-right: 3px solid $borderColor
+      }
+    }
+
+    &__whyBC {
+      &__content {
+        width: 300px;
+        height: 315px;
+        margin: 20px;
+        color: $text;
+        //border: 2px solid violet;
+
+        img {
+          height: 200px;
+          width: 250px;
+        }
+      }
+    }
+  }
+}

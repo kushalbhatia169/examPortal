@@ -1,0 +1,128 @@
+@import "../../scss/brand_color";
+@import "../../scss/screen_size";
+
+.login-main {
+  $slef: &;
+  width: 85%;
+  padding: 7rem;
+  border: 3px solid $borderColor;
+  background-color: snow;
+  margin-left: 7rem;
+  margin-top: 3rem;
+  height: 600px;
+  justify-content: center;
+
+  &--register {
+    height: max-content;
+  }
+
+  @include sm {
+    background: unset;
+    height: unset;
+    width: unset;
+    border: unset;
+    margin-left: 0rem;
+    margin-top: unset;
+    padding: unset;
+    justify-content: flex-start;
+  }
+
+  &__logo {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    @include sm {
+      flex-direction: column;
+      justify-content: unset;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__form {
+    border-left: 3px solid $borderColor;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 50%;
+
+    &--register {
+      border-left: unset;
+      flex-wrap: wrap;
+      //width: 800px;
+      justify-content: flex-start;
+
+      @include sm {
+        height: unset;
+        flex-wrap: unset;
+        flex-wrap: unset;
+        width: unset;
+        justify-content: unset;
+      }
+    }
+
+    @include sm {
+      border-left: unset;
+      width: 100%;
+    }
+
+  }
+
+  &__div {
+    display: flex;
+    justify-content: center;
+    margin-left: 3rem;
+
+    @include sm {
+      margin-left: unset;
+    }
+  }
+
+  &__form_div {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-left: 3rem;
+
+    &--register {
+      height: 500px;
+      width: 40%;
+      flex-wrap: wrap;
+
+      @include sm {
+        height: unset;
+        flex-wrap: unset;
+      }
+    }
+
+    @include sm {
+      margin-left: unset;
+    }
+  }
+
+  &__logo_div {
+    display: flex;
+    align-items: center;
+
+    @include sm {
+      align-items: unset;
+      justify-content: center;
+    }
+  }
+
+  &__button_div {
+    display: flex;
+    flex-direction: column;
+    width: 270px
+  }
+
+  &__button {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+
+    @include sm {
+      margin-left: unset;
+    }
+  }
+}

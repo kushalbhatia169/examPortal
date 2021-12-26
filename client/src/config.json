@@ -1,0 +1,19 @@
+{
+    "baseUrl":" http://localhost:8000/api/user",
+    "wsServer":"wss://baatcheet-77.herokuapp.com",
+    "createUser":"/register",
+    "loginUser":"/login",
+    "securityQuestion":"/getSecurityQuestion",
+    "forgetPassword":"/changePassword",
+    "verifyEmail":"/verify",
+    "updateUser":"/update",
+    "deleteUser":"/delete",
+    "getUser":"/users",
+    "getAllUser":"/",
+    "verifyPhone": "/verify/phone/",
+    "searchUser": "/search/",
+    "addContact": "/addContact",
+    "getContacts": "/contacts/",
+    "deleteContact": "/deleteContact",
+    "getChats": "/getChats"
+}
