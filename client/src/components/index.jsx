@@ -3,6 +3,7 @@ import Login from './login/login';
 import Register from './login/register';
 import ForgetPassword from './login/forget_password';
 import Profile from './profile/profile';
+import Instruction from './instruction/instruction';
 
 export const componentsModules = {
   Home,
@@ -10,4 +11,5 @@ export const componentsModules = {
   Register,
   ForgetPassword,
   Profile,
+  Instruction,
 };

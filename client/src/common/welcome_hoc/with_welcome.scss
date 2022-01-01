@@ -9,7 +9,9 @@
     height: 70px;
     background: #FFCC66;
     border-bottom: 1px solid seashell;
-    z-index: 1;
+    position: sticky;
+    z-index: 30;
+    top: 0px !important;
 
     &__link {
       &__list {

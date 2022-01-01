@@ -122,7 +122,7 @@ const Forget_password = (props) => {
                   value: security_answer, setValue: setStateData, name: 'security_answer', register, errors }} />
               </Box>
               <Box className="me-5"><Password_fields {...{ classes, label: 'Password', value: password, name: 'password',
-                setValue: setStateData, register, errors, validate: from === 'register' && validate,
+                setValue: setStateData, register, errors, validate,
                 errorCheckPassword }} /></Box>
               <Box className="me-5"><Password_fields {...{ classes, label: 'Confirm Password',
                 value: confirmPassword, name: 'confirmPassword', setValue: setStateData,

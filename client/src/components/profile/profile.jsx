@@ -1,44 +1,22 @@
 import React, { useContext } from 'react';
-import { Box, Button, Table, TableBody, TableRow, TableCell, TableContainer } from '@mui/material';
-import { /* Link, */ useHistory } from 'react-router-dom';
-import { Menu, Dropdown, message, Space } from 'antd';
-import { DownOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Box, Table, TableBody, TableRow, TableCell, TableContainer } from '@mui/material';
+import { Link } from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 // import DownloadIcon from '@mui/icons-material/Download';
 import { context } from '../../store/store';
 import download from '../../images/download.png';
 import './profile.scss';
 import 'antd/dist/antd.css';
+import withProfile from '../../common/profile_hoc/with_profie_hoc';
 
-const Profile = () => {
-  const { state, dispatch } = useContext(context),
+const Profile = (props) => {
+  const { state } = useContext(context),
+        { children } = props,
         { userData } = state;
-  const history = useHistory();
-  const handleMenuClick = () => {
-          message.info('User successfully logged out.');
-          dispatch({ type: 'LOGOUT' });
-          history.push('/home');
-        },
-        menu = (
-          <Menu onClick={handleMenuClick}>
-            <Menu.Item key="1" className="icon" icon={<LogoutOutlined />}>
-        Logout
-            </Menu.Item>
-          </Menu>
-        );
 
   return (
     <Box className="profile-main">
-      <Box className="profile-main__head">
-        <h1>Online Exam Portal</h1>
-        <Space wrap className="mb-3 me-2">
-          <Dropdown overlay={menu}>
-            <Button>
-                Menu <DownOutlined className="ms-2 mt-1" />
-            </Button>
-          </Dropdown>
-        </Space>
-      </Box>
+      {children}
       <Box className="profile-main__body mt-5">
         <Box className="profile-main__img">
           <img src={download} alt="user" style={{ border: '1px solid black' }} />
@@ -78,7 +56,9 @@ const Profile = () => {
                 </TableRow>
                 <TableRow>
                   <TableCell component="th" scope="row" className="profile-main__labelHeading">E-Mail</TableCell>
-                  <TableCell className="span_div_text_color">{userData?.email}</TableCell>
+                  <TableCell className="span_div_text_color" style={{ textTransform: 'unset' }}>
+                    {userData?.email}
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell component="th" scope="row" className="profile-main__labelHeading">Phone Number</TableCell>
@@ -86,7 +66,9 @@ const Profile = () => {
                 </TableRow>
                 <TableRow>
                   <TableCell component="th" scope="row" className="profile-main__labelHeading">Course</TableCell>
-                  <TableCell className="span_div_text_color">{userData?.course}</TableCell>
+                  <TableCell className="span_div_text_color" style={{ textTransform: 'unset' }}>
+                    {userData?.course}
+                  </TableCell>
                 </TableRow>
                 {/* <TableRow>
                   <TableCell component="th" scope="row" className="profile-main__labelHeading">
@@ -106,17 +88,17 @@ const Profile = () => {
         </Box>
       </Box>
       <Box className="profile-main__footer">
-        <Box className="profile-main__footer-content">
+        <Box className="profile-main__footer-content mb-4">
           <h5>Do you want to take test?</h5>
-          <button className="btn btns ms-3 p-2">
+          <Link className="btn btns ms-3 p-2" to={{ pathname: `/instruction/${userData._id}` }}>
             <span style={{ color: 'red', padding: 10 }}>
                 Proceed to text <ArrowForwardIcon className="ms-1 mb-1" />
             </span>
-          </button>
+          </Link>
         </Box>
       </Box>
     </Box>
   );
 };
 
-export default Profile;
+export default withProfile(Profile);

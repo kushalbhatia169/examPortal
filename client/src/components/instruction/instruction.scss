@@ -1,0 +1,8 @@
+.instruction-main {
+  $self: &;
+
+
+  &__footer {
+    border-bottom: 1px solid lightgrey;
+  }
+}
