@@ -100,22 +100,29 @@ const Exam = (props) => {
     const isAnswerd = selectedAns.find(e => e.quesNo === selectedQues + 1);
     setSelectedRadioAns(isAnswerd?.answer);
   };
-  const submitAnswer = () => {
+  const submitAnswer = async (timeUp) => {
     const endTime = new Date().getTime();
-    confirm({
+    !timeUp && confirm({
       title: 'Do you want to submit the exam?',
       content: 'You can not change your answer after submitting',
       onOk() {
-        const obj = { url: state.config.baseUrl + state.config.submitExam };
-        const data = { answers: selectedAns, userName: userData.username, examTime: state.ExamStartTime,
-          examEndTime: endTime };
-        APICallManager.postCall(obj, data, (res) => {
-          if (res.success) {
-            history.push(`/result/${userData._id}`);
-          }
-        });
+        apiCall(endTime);
       },
       onCancel() {},
+    });
+    if (timeUp) {
+      await apiCall(endTime);
+    }
+  };
+
+  const apiCall = async (endTime) => {
+    const obj = { url: state.config.baseUrl + state.config.submitExam };
+    const data = { answers: selectedAns, userName: userData.username, examTime: state.ExamStartTime,
+      examEndTime: endTime };
+    APICallManager.postCall(obj, data, async (res) => {
+      if (res.success) {
+        history.push(`/result/${userData._id}`);
+      }
     });
   };
   const openQuestion = (selected) => {
@@ -141,7 +148,7 @@ const Exam = (props) => {
           <img src={download} alt="user" />
           <p className="d-flex flex-column mt-1">
             <span>Time Left</span>
-            <Timer initialMinute={120} />
+            <Timer initialMinute={1} submitAnswer={submitAnswer} />
             <span className="text-capitalize mt-1">{state?.userData?.username || 'Unamed'}</span>
           </p>
         </Box>
