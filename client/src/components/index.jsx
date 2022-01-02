@@ -4,7 +4,8 @@ import Register from './login/register';
 import ForgetPassword from './login/forget_password';
 import Profile from './profile/profile';
 import Instruction from './instruction/instruction';
-
+import Exam from './exam/exam';
+// import Result from './result/result';
 export const componentsModules = {
   Home,
   Login,
@@ -12,4 +13,6 @@ export const componentsModules = {
   ForgetPassword,
   Profile,
   Instruction,
+  Exam,
+  // Result,
 };

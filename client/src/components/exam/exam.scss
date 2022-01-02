@@ -1,0 +1,74 @@
+.exam-main {
+  $self: &;
+  //   background-color: #f5f5f5;
+
+  &__body {
+    border-bottom: 2px solid lightgray;
+  }
+
+  &__img {
+    img {
+      width: 60px;
+      height: 60px;
+    }
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__sec {
+    overflow-y: scroll;
+    height: 325px;
+  }
+
+  .ant-radio-inner {
+    border-color: red !important;
+
+    :hover {
+      border-color: red !important;
+    }
+
+    &::after {
+      background-color: red !important;
+    }
+  }
+
+  &__btn {
+    height: 290px;
+    overflow-y: scroll;
+
+    button {
+      height: 40px;
+      width: 25px;
+      border-radius: 50%;
+      border: 1px solid lightgray;
+    }
+  }
+
+  &__btn_show {
+
+    button {
+      height: 40px;
+      width: 25px;
+      border-radius: 50%;
+      border: 1px solid lightgray;
+    }
+  }
+
+  &__answered {
+    background-color: lightgreen !important;
+    color: #ffffff !important;
+  }
+
+  &__notAnswered {
+    background-color: red !important;
+    color: #ffffff !important;
+  }
+
+  &__reviewAnswered {
+    background-color: gold !important;
+    color: #ffffff !important;
+  }
+}

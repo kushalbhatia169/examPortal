@@ -1,22 +1,33 @@
 import React, { useContext } from 'react';
 import { Box, Button } from '@mui/material';
-import { /* Link, */ } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 // import DownloadIcon from '@mui/icons-material/Download';
 import { context } from '../../store/store';
 import '../profile/profile.scss';
 import 'antd/dist/antd.css';
 import './instruction.scss';
 import withProfile from '../../common/profile_hoc/with_profie_hoc';
-import { commonNodeModules } from '../../common/index.jsx';
+import { Modal } from 'antd';
+import { InfoCircleTwoTone } from '@ant-design/icons';
 
-const { bootbox } = commonNodeModules;
+const { confirm } = Modal;
+
 const Instruction = (props) => {
-  const { state, dispatch } = useContext(context),
+  const { state } = useContext(context),
         { userData } = state,
-        { children } = props;
-  //   const history = useHistory();
-  const showConsent = () => {
-    bootbox.alert('msg');
+        { children } = props,
+        history = useHistory();
+  const showConfirm = () => {
+    confirm({
+      title: 'Are you ready to start test?',
+      icon: <InfoCircleTwoTone />,
+      content: `After clicking the OK button, test will start don't refresh the page otherwise
+       your progress will be lost.`,
+      onOk() {
+        history.push(`/exam/${userData?._id}`);
+      },
+      onCancel() {},
+    });
   };
   return (
     <Box className="profile-main instruction-main">
@@ -34,10 +45,10 @@ const Instruction = (props) => {
           </ul>
         </Box>
         <Box className="instruction-main__footer mt-5 ms-3 pb-4">
-          <i className="mb-5" style={{ fontSize: 38 }}>Best of luck for your exam {userData?.username}.</i>
+          <i className="mb-5" style={{ fontSize: 38 }}>Best of luck for your exam {userData?.name}.</i>
         </Box>
         <Box className="d-flex justify-content-center">
-          <Button className="btn btns w-25 mt-4" onClick={() => { showConsent }}>
+          <Button className="btn btns w-25 mt-4" onClick={showConfirm}>
             <span style={{ fontSize: 18 }}>Start Exam</span>
           </Button>
         </Box>
