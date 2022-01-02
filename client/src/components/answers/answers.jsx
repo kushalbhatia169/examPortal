@@ -37,7 +37,7 @@ const Answer = (props) => {
                 </TableCell>
               </TableHead>
               <TableBody key="ContactsBody">
-                {studentAnswers[0] && studentAnswers[0]?.map((item) => (
+                {studentAnswers && studentAnswers?.map((item) => (
                   <><TableRow>
                     <TableCell component="th" scope="row" className="profile-main__labelHeading">{item.quesNo}</TableCell>
                     <TableCell className="span_div_text_color">
