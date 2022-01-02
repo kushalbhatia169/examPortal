@@ -1,9 +1,13 @@
 const express = require('express')
 const { isEmpty } = require('lodash');
+const multer  = require('multer')
+const path = require('path');
 const UserRegistration = require('../controllers/UserRegistration');
 const UserLogin = require('../controllers/UserLogin');
 const UserUpdation = require('../controllers/UserUpdation');
 const GetAllUsers = require('../controllers/GetAllUsers');
+const fs = require('fs');
+const csv = require('csvtojson');
 // const GetSingleUser = require('../controllers/GetSingleUser');
 const UserDeletion = require('../controllers/UserDeletion');
 // const VerifyUserEmail = require('../controllers/VerifyUserEmail');
@@ -300,6 +304,102 @@ router.get('/verify/:otp', async (req, res) => {
     }
 });
 
+router.post('/getExam', middleware.isAuthorized, async (_req, res) => {
+    const csvFilePath = path.join(__dirname, '..', 'paper', 'mkl.csv');
+    const date = new Date().getTime();
+    csv()
+    .fromFile(csvFilePath)
+    .then((jsonObj)=>{
+        return res.status(201).json({
+            success: true,
+            data: jsonObj,
+            timeStamp: date,
+        });
+    })
+    .catch(err => {
+        return res.status(400).json({
+            success: false,
+            error: err,
+        });
+    });
+});
+
+router.post('/submitExam', middleware.isAuthorized, async (req, res) => {
+    try {
+        const { userName, answers, examTime, examEndTime } = req.body;
+        if(examTime) {
+            const totalExamTime = examEndTime - examTime;
+            const totalTime = totalExamTime / 1000;
+            const minutes = Math.floor(totalTime / 60);
+            if(minutes > 120) {
+                return res.status(200).json({
+                    success: false,
+                    message: 'Exam time exceeded!',
+                });
+            }
+            else {
+                fs.writeFileSync(path.join(__dirname, '..', 'answer', `${userName}.json`), 
+                JSON.stringify(answers));
+                return res.status(201).json({
+                    success: true,
+                });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            success: false,
+            error,
+            message: 'Exam not submitted!',
+        }) 
+    }
+});
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '..', 'paper'));
+    },
+    filename: function (req, file, cb) {
+        // You could rename the file name
+        // cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+
+        // You could use the original name
+        cb(null, 'mkl.csv');
+    }
+});
+
+const upload = multer({storage: storage})
+router.post('/uploadFile', upload.single('mkl') ,  middleware.isAuthorized, async(req, res) => {
+    return res.json({
+        success: true,
+    });
+});
+
+router.get('/getAnswers', middleware.isAuthorized, async (req, res) => {
+    const getAllUsers = new GetAllUsers;
+    try {
+        const status = await getAllUsers.getUsers(); 
+        if(status instanceof Error || isEmpty(status)) {
+            console.log(status)
+            return res.status(200).json({
+                status: false,
+                message: status.message,
+            });
+        }
+        if(status) {
+            return res.status(201).json({
+                success: true,
+                data: [...status],
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            success: false,
+            error,
+        })
+    }
+});
 // router.post('/addContact',middleware.isAuthorized, async (req, res) => {
 //     const addContact = new AddNewContact();
 //     try {
