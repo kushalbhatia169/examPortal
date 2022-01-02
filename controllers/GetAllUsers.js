@@ -1,5 +1,6 @@
 const User = require('../models/User');
 // const { Error } = require('mongoose');
+const root = require('rootrequire');
 const path = require('path');
 const fs = require('fs');
 class GetAllUsers {
@@ -16,7 +17,7 @@ class GetAllUsers {
                 const data = [];
                 users.map((item)=>{
                     const { username, name } = item;
-                    let filePath = path.join(__dirname, '..', 'answer', `${username}.json`);
+                    let filePath = path.resolve(root, 'answer', `${username}.json`);
                     try {
                         const answer = fs.readFileSync(filePath, 'utf8');
                         return data.push({

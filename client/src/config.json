@@ -1,5 +1,5 @@
 {
-    "baseUrl":" https://exam-portel.herokuapp.com/api/user",
+    "baseUrl":" http://localhost:8000/api/user",
     "createUser":"/register",
     "loginUser":"/login",
     "securityQuestion":"/getSecurityQuestion",
