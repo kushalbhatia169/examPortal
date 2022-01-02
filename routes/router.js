@@ -4,24 +4,28 @@ const multer  = require('multer')
 const path = require('path');
 const UserRegistration = require('../controllers/UserRegistration');
 const UserLogin = require('../controllers/UserLogin');
-const UserUpdation = require('../controllers/UserUpdation');
 const GetAllUsers = require('../controllers/GetAllUsers');
 const fs = require('fs');
 const csv = require('csvtojson');
-// const GetSingleUser = require('../controllers/GetSingleUser');
-const UserDeletion = require('../controllers/UserDeletion');
-// const VerifyUserEmail = require('../controllers/VerifyUserEmail');
 const sendEmail = require("../utils/email");
 const middleware = require("../middlewares");
-// const Token = require("../models/token");
-// const crypto = require('crypto');
-// const AddNewContact = require('../controllers/AddNewContact');
-// const GetContacts = require('../controllers/GetContacts');
-// const GetChats = require('../controllers/GetChats');
 const GetSecurityQuestion = require('../controllers/GetSecurityQuestion');
 const ChangePassword = require('../controllers/ChangePassword');
 const router = express.Router();
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '..', 'paper'));
+    },
+    filename: function (req, file, cb) {
+        // You could rename the file name
+        // cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
 
+        // You could use the original name
+        cb(null, 'mkl.csv');
+    }
+});
+
+const upload = multer({storage: storage});
 let otp = Math.random();
 otp = otp * 1000000;
 otp = parseInt(otp);
@@ -38,13 +42,6 @@ router.post('/register', async (req, res) => {
                 message: status.message,
           })
         }
-        // const token = await new Token({
-        //     userId: _id,
-        //     token: crypto.randomBytes(32).toString("hex"),
-        //   }).save();
-      
-        // const message = `${process.env.BASE_URL}/verify/${_id}/${token.token}`;
-        // await sendEmail(email, "Please confirm your Email account", message);
       
         return res.status(201).json({
             success: true,
@@ -93,129 +90,6 @@ router.get('/login', middleware.isAuthenticated, async(req, res) => {
         return res.status(400).json({
             success: false,
             message: error.message,
-        })
-    }
-});
-
-// router.put("/verify/phone/:id", async (req, res) => {
-//     const userUpdation = new UserUpdation();
-//     try {
-//       const { id } = req.params;
-//       const verify = 'phoneVerify'
-//       const status = await userUpdation.updateUser(id, req, verify);
-//         if(status instanceof Error) {
-//             return res.status(200).json({
-//                 success: false,
-//                 message: 'Phone Number not verified!',
-//             })
-//         }
-//         if(status){
-//             return res.status(201).json({
-//                 success: true,
-//                 message: 'Phone number successfully verified!',
-//             })
-//         }
-//         else {
-//             throw Error;
-//         }
-//     } catch (error) {
-//         res.status(400).send("An error occured");
-//     }
-// });
-
-// router.get("/verify/:id/:token", async (req, res) => {
-//     const verifyUserEmail = new VerifyUserEmail();
-//     try {
-//         const status = await verifyUserEmail.verifyUserEmail(req);
-//         if(status instanceof Error) {
-//             return res.status(200).send("Invalid link");
-//         }
-//         if(!status) throw Error;
-//         return res.send("email verified sucessfully");
-//     } catch (error) {
-//       res.status(400).send("An error occured");
-//     }
-// });
-
-router.put('/:id/update', middleware.isAuthorized, async(req, res)=>{
-    const userUpdation = new UserUpdation();
-    const id = req.params.id;
-    try {
-        const status = await userUpdation.updateUser(id, req);
-        if(status instanceof Error) {
-            return res.status(200).json({
-                success: false,
-                message:  status.message,
-            })
-        }
-        if(status){
-            const {_id, username, phoneNumber, email} = status;
-            return res.status(201).json({
-                success: true,
-                data: {_id, username, phoneNumber, email},
-                message: 'User updated!',
-            })
-        }
-        else {
-            throw Error;
-        }
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error,
-            message: 'User not updated!',
-        })
-    }
-});
-
-router.delete('/:id/delete',middleware.isAuthorized, async(req, res) => {
-    const deleteUser = new UserDeletion;
-    try {
-        const status = await deleteUser.deleteUser(req);
-        if(status instanceof Error) {
-            return res.status(200).json({
-                status: false,
-                message:  status.message,
-            });
-        }
-        console.log(status)
-        if(status) {
-            return res.status(201).json({
-                success: true,
-                message: 'user deleted!',
-            })
-        }
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error,
-            message: 'User not deleted!',
-        })
-    }
-});
-
-router.get('/users', middleware.isAuthorized, async(req, res)=> {
-    const getAllUsers = new GetAllUsers;
-    try {
-        const status = await getAllUsers.getUsers(); 
-        if(status instanceof Error || isEmpty(status)) {
-            return res.status(200).json({
-                status: false,
-                message: status.message,
-            });
-        }
-        if(status) {
-            return res.status(201).json({
-                success: true,
-                data: {...status},
-                message: 'fetched all user',
-            })
-        }
-    } catch (error) {
-        return res.status(400).json({
-            success: false,
-            error,
-            message: 'Users not fetched!',
         })
     }
 });
@@ -355,20 +229,6 @@ router.post('/submitExam', middleware.isAuthorized, async (req, res) => {
     }
 });
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '..', 'paper'));
-    },
-    filename: function (req, file, cb) {
-        // You could rename the file name
-        // cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
-
-        // You could use the original name
-        cb(null, 'mkl.csv');
-    }
-});
-
-const upload = multer({storage: storage})
 router.post('/uploadFile', upload.single('mkl') ,  middleware.isAuthorized, async(req, res) => {
     return res.json({
         success: true,
@@ -400,95 +260,5 @@ router.get('/getAnswers', middleware.isAuthorized, async (req, res) => {
         })
     }
 });
-// router.post('/addContact',middleware.isAuthorized, async (req, res) => {
-//     const addContact = new AddNewContact();
-//     try {
-//         const status = await addContact.addNewContact(req);
-//         if(status instanceof Error) {
-//             console.log(status)
-//             return res.status(200).json({
-//                 success: false,
-//                 message: status.message,
-//             });
-//         }
-//         if(status) {
-//             return res.status(201).json({
-//                 success: true,
-//                 data: {...status?._doc},
-//                 message: 'Contact added!',
-//             })
-//         }
-//         else {
-//             throw Error;
-//         }
-//     } catch (error) {
-//         console.log(error)
-//         return res.status(400).json({
-//             success: false,
-//             error,
-//             message: 'Contact not added!',
-//         })
-//     }
-// })
-
-// router.get('/contacts/:clientId', middleware.isAuthorized, async(req, res)=> {
-//     const getContacts = new GetContacts();
-//     try {
-//         const status = await getContacts.getAllContacts(req);
-//         if(status instanceof Error) {
-//             return res.status(200).json({
-//                 status: false,
-//                 message: status.message,
-//             });
-//         }
-//         if(status) {
-//             return res.status(201).json({
-//                 success: true,
-//                 data: [...status],
-//                 message: 'fetched all contacts',
-//             })
-//         }
-//         else {
-//             throw Error;
-//         }
-//     } catch (error) {
-//         return res.status(400).json({
-//             success: false,
-//             error,
-//             message: 'Contacts not fetched!',
-//         })
-//     }
-// });
-
-// router.post('/getChats', middleware.isAuthorized, async(req, res) => {
-//     const getMsgs = new GetChats();
-//     try {
-//         const status = await getMsgs.getChats(req);
-       
-//         if(status instanceof Error) {
-//             return res.status(200).json({
-//                 status: false,
-//                 message: status.message,
-//             });
-//         }
-//         if(status) {
-//             return res.status(201).json({
-//                 success: true,
-//                 data: [...status],
-//             })
-//         }
-//         else {
-//             throw Error;
-//         }
-//     }
-//     catch (error){
-//         console.log(error)
-//         return res.status(400).json({
-//             success: false,
-//             error,
-//             message: 'Chats not fetched!',
-//         })
-//     }
-// });
 
 module.exports = router

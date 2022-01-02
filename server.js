@@ -19,7 +19,8 @@ app.use(bodyParser.urlencoded({ extended: true}));
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, './server.bundle.js')));
-
+app.use(express.static(path.join(__dirname, './paper')));
+app.use(express.static(path.join(__dirname, './answer')));
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // const server = require('http').createServer(app);
