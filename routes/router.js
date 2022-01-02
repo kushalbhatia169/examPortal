@@ -108,7 +108,7 @@ router.post('/getSecurityQuestion', async(req, res)=> {
         }
         if(status) {
             const {security_question, username} = status;
-            await sendEmail(status.email, "Otp sent from online portal", otp);
+            //await sendEmail(status.email, "Otp sent from online portal", otp);
             return res.status(201).json({
                 success: true,
                 data: { security_question, username },
@@ -153,31 +153,31 @@ router.put('/changePassword', async(req, res)=>{
     }
 });
 
-router.get('/verify/:otp', async (req, res) => {
-    console.log(req.params, otp)
-    try {
-        if(parseInt(req?.params?.otp) !== otp) {
-            return res.status(200).json({
-                success:false, 
-                message:"Invalid otp",
-            });
-        }
-        else if(parseInt(req?.params?.otp) === otp) {
-            return res.status(201).json({
-                success: true,
-                message: 'Email verified successfully',
-            });
-        }
-        else throw Error;
-    } 
-    catch (error) {
-        return res.status(400).json({
-            success: false,
-            error,
-            message: error.message,
-        })
-    }
-});
+// router.get('/verify/:otp', async (req, res) => {
+//     console.log(req.params, otp)
+//     try {
+//         if(parseInt(req?.params?.otp) !== otp) {
+//             return res.status(200).json({
+//                 success:false, 
+//                 message:"Invalid otp",
+//             });
+//         }
+//         else if(parseInt(req?.params?.otp) === otp) {
+//             return res.status(201).json({
+//                 success: true,
+//                 message: 'Email verified successfully',
+//             });
+//         }
+//         else throw Error;
+//     } 
+//     catch (error) {
+//         return res.status(400).json({
+//             success: false,
+//             error,
+//             message: error.message,
+//         })
+//     }
+// });
 
 router.post('/getExam', middleware.isAuthorized, async (_req, res) => {
     const csvFilePath = path.resolve(__dirname, 'paper', 'mkl.csv');
