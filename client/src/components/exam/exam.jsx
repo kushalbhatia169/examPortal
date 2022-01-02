@@ -148,7 +148,7 @@ const Exam = (props) => {
           <img src={download} alt="user" />
           <p className="d-flex flex-column mt-1">
             <span>Time Left</span>
-            <Timer initialMinute={1} submitAnswer={submitAnswer} />
+            <Timer initialMinute={120} submitAnswer={submitAnswer} />
             <span className="text-capitalize mt-1">{state?.userData?.username || 'Unamed'}</span>
           </p>
         </Box>
