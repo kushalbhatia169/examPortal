@@ -1,6 +1,5 @@
 const User = require('../models/User');
 // const { Error } = require('mongoose');
-const root = require('rootrequire');
 const path = require('path');
 const fs = require('fs');
 class GetAllUsers {
