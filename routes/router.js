@@ -14,7 +14,7 @@ const ChangePassword = require('../controllers/ChangePassword');
 const router = express.Router();
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '..', 'paper'));
+        cb(null, path.resolve(__dirname, '..', 'paper'));
     },
     filename: function (req, file, cb) {
         // You could rename the file name
@@ -179,7 +179,7 @@ router.get('/verify/:otp', async (req, res) => {
 });
 
 router.post('/getExam', middleware.isAuthorized, async (_req, res) => {
-    const csvFilePath = path.join(__dirname, '..', 'paper', 'mkl.csv');
+    const csvFilePath = path.resolve(__dirname, '..', 'paper', 'mkl.csv');
     const date = new Date().getTime();
     csv()
     .fromFile(csvFilePath)
@@ -212,7 +212,7 @@ router.post('/submitExam', middleware.isAuthorized, async (req, res) => {
                 });
             }
             else {
-                fs.writeFileSync(path.join(__dirname, '..', 'answer', `${userName}.json`), 
+                fs.writeFileSync(path.resolve(__dirname, '..', 'answer', `${userName}.json`), 
                 JSON.stringify(answers));
                 return res.status(201).json({
                     success: true,
