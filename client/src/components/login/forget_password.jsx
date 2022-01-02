@@ -4,11 +4,11 @@ import { Box, Button } from '@mui/material';
 import { useStyles } from '../../style_jsx/styles';
 import { Link, useHistory } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { NumberOutlined } from '@ant-design/icons';
+// import { NumberOutlined } from '@ant-design/icons';
 import TextFieldsComponent from '../../common/text_field/text_field';
 import Password_fields from '../../common/password_field/password_field';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
-import { message, notification } from 'antd';
+import { notification } from 'antd';
 import withWelcome from '../../common/welcome_hoc/with_welcome';
 import { getNotificationStyle } from '../../common/getNotificarionStyle.ts';
 import { context } from '../../store/store';
@@ -41,7 +41,7 @@ const Forget_password = (props) => {
           otp: '',
         }),
         history = useHistory(),
-        { password, confirmPassword, /*  security_question, */ security_answer, otp } = fields,
+        { password, confirmPassword, /*  security_question, */ security_answer } = fields,
         setStateData = useCallback(async (stateName, value) => {
           let default_Value = value;
           if (stateName === 'otp') {
@@ -51,7 +51,7 @@ const Forget_password = (props) => {
             ...prevState,
             [stateName]: default_Value }));
         }, []),
-        [isEmailVerify, setIsEmailVerify] = useState(false),
+        // [isEmailVerify, setIsEmailVerify] = useState(false),
         errorCheckPassword = (passwordType) => {
           const errorData = (passwordType === 'minLength' || passwordType === 'required') ?
             'minimum 8 characters required'
@@ -68,15 +68,15 @@ const Forget_password = (props) => {
           hasNotDollar: (value) => value && /^[^$]+$/i.test(value),
           hasCharNumSpecialChar: (value) => value && /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(value),
         },
-        onVerifyOtp = () => {
-          const obj = { url: state.config.baseUrl + state.config.verifyEmail + '/' + otp };
-          APICallManager.getCall(obj, null, async (res) => {
-            if (res.success) {
-              message.success('Email verified successfully');
-              setIsEmailVerify(true);
-            }
-          });
-        },
+        // onVerifyOtp = () => {
+        //   const obj = { url: state.config.baseUrl + state.config.verifyEmail + '/' + otp };
+        //   APICallManager.getCall(obj, null, async (res) => {
+        //     if (res.success) {
+        //       message.success('Email verified successfully');
+        //       setIsEmailVerify(true);
+        //     }
+        //   });
+        // },
         onSubmit = () => {
           if (checkConfirmPassword(password, confirmPassword)) {
             const obj = { url: state.config.baseUrl + state.config.forgetPassword };
@@ -101,18 +101,17 @@ const Forget_password = (props) => {
             <Box className="login-main__div">
               <p component="legend"
                 className={`${classes.label_form} labels mt-2 heading content_26`}>
-                {(isEmailVerify && 'Answer security question to Change Your Password.') ||
-          'Enter an otp sent to your email.'}
+                Answer security question to Change Your Password.
               </p>
             </Box>
-            {!isEmailVerify && <form className="login-main__form_div" onSubmit={handleSubmit(() => onVerifyOtp())}>
+            {/* {!isEmailVerify && <form className="login-main__form_div" onSubmit={handleSubmit(() => onVerifyOtp())}>
               <TextFieldsComponent {...{ classes, label: 'Otp', icon: <NumberOutlined />, required: true,
                 value: otp, setValue: setStateData, name: 'otp', register, errors, maxLength: '6' }} />
               <Button type="submit" class="btn btns mt-3" variant="outlined" title="Forget Password">
                 Verify Email
               </Button>
-            </form>}
-            {isEmailVerify && <form className="login-main__form_div" onSubmit={handleSubmit(() => onSubmit())}>
+            </form>} */}
+            <form className="login-main__form_div" onSubmit={handleSubmit(() => onSubmit())}>
               <Box className="me-5 d-flex flex-column justify-content-start">
                 <Box className="d-flex flex-wrap">
                   <span style={{ color: 'red' }}>Security Question:</span>
@@ -141,7 +140,7 @@ const Forget_password = (props) => {
                   <Link className="heading" to={{ pathname: '/login', from: 'login' }}> Login Now</Link>
                 </Box>
               </Box>
-            </form>}
+            </form>
           </Box>
         </Box>
       </Box>
