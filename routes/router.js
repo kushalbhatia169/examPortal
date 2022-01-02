@@ -180,7 +180,7 @@ router.get('/verify/:otp', async (req, res) => {
 });
 
 router.post('/getExam', middleware.isAuthorized, async (_req, res) => {
-    const csvFilePath = path.resolve(root, 'paper', 'mkl.csv');
+    const csvFilePath = path.resolve(__dirname, 'paper', 'mkl.csv');
     const date = new Date().getTime();
     csv()
     .fromFile(csvFilePath)
