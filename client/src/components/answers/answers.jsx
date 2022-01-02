@@ -13,7 +13,7 @@ const Answer = (props) => {
         { userData, studentAnswers, studentName } = state || {};
 
   const { children } = props;
-  console.log(state);
+
   return (
     <Box className="profile-main instruction-main">
       {children}
