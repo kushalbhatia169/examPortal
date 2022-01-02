@@ -15,7 +15,7 @@ const ChangePassword = require('../controllers/ChangePassword');
 const router = express.Router();
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.resolve(root, 'paper'));
+        cb(null, path.resolve(__dirname, 'paper'));
     },
     filename: function (req, file, cb) {
         // You could rename the file name
@@ -214,7 +214,7 @@ router.post('/submitExam', middleware.isAuthorized, async (req, res) => {
                 });
             }
             else {
-                fs.writeFileSync(path.resolve(root, 'answer', `${userName}.json`), 
+                fs.writeFileSync(path.resolve(__dirname, 'answer', `${userName}.json`), 
                 JSON.stringify(answers));
                 return res.status(201).json({
                     success: true,

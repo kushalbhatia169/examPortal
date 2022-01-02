@@ -17,7 +17,7 @@ class GetAllUsers {
                 const data = [];
                 users.map((item)=>{
                     const { username, name } = item;
-                    let filePath = path.resolve(root, 'answer', `${username}.json`);
+                    let filePath = path.resolve(__dirname, 'answer', `${username}.json`);
                     try {
                         const answer = fs.readFileSync(filePath, 'utf8');
                         return data.push({
