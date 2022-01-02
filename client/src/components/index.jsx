@@ -5,7 +5,9 @@ import ForgetPassword from './login/forget_password';
 import Profile from './profile/profile';
 import Instruction from './instruction/instruction';
 import Exam from './exam/exam';
-// import Result from './result/result';
+import Result from './result/result';
+import Admin from './admin/admin';
+import Answers from './answers/answers';
 export const componentsModules = {
   Home,
   Login,
@@ -14,5 +16,7 @@ export const componentsModules = {
   Profile,
   Instruction,
   Exam,
-  // Result,
+  Result,
+  Admin,
+  Answers,
 };

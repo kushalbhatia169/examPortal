@@ -22,6 +22,7 @@ const LoginRegisterPage = (props) => {
       if (res.success) {
         res?.data?.jwt && setCookie('token', res?.data?.jwt, 1);
         dispatch({ type: 'userData', payload: { ...res.data, isLoggedIn: true } });
+        localStorage.setItem('userData', JSON.stringify(res.data));
         history.push(`/profile/${res.data.username}`);
       }
     });

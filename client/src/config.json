@@ -15,5 +15,9 @@
     "addContact": "/addContact",
     "getContacts": "/contacts/",
     "deleteContact": "/deleteContact",
-    "getChats": "/getChats"
+    "getChats": "/getChats",
+    "getExam": "/getExam",
+    "submitExam": "/submitExam",
+    "uploadFile": "/uploadFile",
+    "getAnswers": "/getAnswers"
 }

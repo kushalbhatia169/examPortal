@@ -89,12 +89,19 @@ const Profile = (props) => {
       </Box>
       <Box className="profile-main__footer">
         <Box className="profile-main__footer-content mb-4">
-          <h5>Do you want to take test?</h5>
-          <Link className="btn btns ms-3 p-2" to={{ pathname: `/instruction/${userData._id}` }}>
-            <span style={{ color: 'red', padding: 10 }}>
+          {state?.userData?.username !== 'admin' && <><h5>Do you want to take test?</h5>
+            <Link className="btn btns ms-3 p-2" to={{ pathname: `/instruction/${userData._id}` }}>
+              <span style={{ color: 'red', padding: 10 }}>
                 Proceed to text <ArrowForwardIcon className="ms-1 mb-1" />
-            </span>
-          </Link>
+              </span>
+            </Link></>}
+          {state?.userData?.username === 'admin' && <>
+            <Link className="btn btns ms-3 p-2" to={{ pathname: `/admin/${userData._id}` }}>
+              <span style={{ color: 'red', padding: 10 }}>
+                Admin Control <ArrowForwardIcon className="ms-1 mb-1" />
+              </span>
+            </Link></>}
+
         </Box>
       </Box>
     </Box>

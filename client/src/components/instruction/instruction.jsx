@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Box, Button } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 // import DownloadIcon from '@mui/icons-material/Download';
 import { context } from '../../store/store';
 import '../profile/profile.scss';
@@ -9,13 +9,17 @@ import './instruction.scss';
 import withProfile from '../../common/profile_hoc/with_profie_hoc';
 import { Modal } from 'antd';
 import { InfoCircleTwoTone } from '@ant-design/icons';
+import APICallManager from '../../services/api_manager';
 
 const { confirm } = Modal;
 
 const Instruction = (props) => {
-  const { state } = useContext(context),
-        { userData } = state,
-        { children } = props,
+  const { state, dispatch } = useContext(context),
+        { userData } = state || {};
+  if (!userData._id) {
+    return <Redirect to="/login" />;
+  }
+  const { children } = props,
         history = useHistory();
   const showConfirm = () => {
     confirm({
@@ -24,7 +28,25 @@ const Instruction = (props) => {
       content: `After clicking the OK button, test will start don't refresh the page otherwise
        your progress will be lost.`,
       onOk() {
-        history.push(`/exam/${userData?._id}`);
+        const obj = { url: state.config.baseUrl + state.config.getExam };
+        const data = { userId: userData._id };
+        APICallManager.postCall(obj, data, (res) => {
+          const questions = [];
+          if (res.success) {
+            res.data.map((item, index) => {
+              const { option1, option2, option3, option4, question } = item;
+              questions.push({
+                no: index + 1,
+                question: question,
+                options: [option1, option2, option3, option4],
+                isDisabled: false,
+              });
+            });
+            dispatch({ type: 'Exam', payload: [...questions] });
+            dispatch({ type: 'ExamStartTime', payload: res.timeStamp });
+            history.push(`/exam/${userData?._id}`);
+          }
+        });
       },
       onCancel() {},
     });
@@ -41,6 +63,8 @@ const Instruction = (props) => {
             <li className="mt-3" style={{ fontSize: 18 }}>Welcome to Online Exam Portal</li>
             <li className="mt-3" style={{ fontSize: 18 }}>Exam has total 120 question</li>
             <li className="mt-3" style={{ fontSize: 18 }}>Total time in Exam is 120 Minutes</li>
+            <li className="mt-3" style={{ fontSize: 18 }}>If you reload your exam will end without submission you will moved
+            back to profile page.</li>
             <li className="mt-3" style={{ fontSize: 18 }}>Negative Marking Exam : <b style={{ fontSize: 20 }}>No</b></li>
           </ul>
         </Box>

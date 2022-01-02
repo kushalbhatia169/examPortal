@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Box, Button } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect } from 'react-router-dom';
 // import DownloadIcon from '@mui/icons-material/Download';
 import download from '../../images/download.png';
 import { context } from '../../store/store';
@@ -8,51 +8,24 @@ import '../profile/profile.scss';
 import 'antd/dist/antd.css';
 import withProfile from '../../common/profile_hoc/with_profie_hoc';
 import { Modal, Radio, Space } from 'antd';
+import Timer from './timer';
 import './exam.scss';
+import APICallManager from '../../services/api_manager';
 
 const { confirm } = Modal;
 
-const Instruction = (props) => {
+const Exam = (props) => {
   const { state } = useContext(context),
-        { userData } = state,
-        { children } = props,
+        { userData } = state || {};
+  if (state.Exam.length === 0) {
+    return <Redirect to={`/profile/${userData._id}`} />;
+  }
+  const { children } = props,
         [selectedQues, setSelectedQues] = useState(1),
         [selectedRadioAns, setSelectedRadioAns] = useState(''),
         [selectedAns, setSelectedAns] = useState([]),
         history = useHistory(),
-        [questions, setQuestions] = useState([{
-          no: 1,
-          question: `What is the output of the following code?`,
-          options: [
-            `What`,
-            `is`,
-            'the',
-            'output',
-          ],
-          isDisabled: false,
-        },
-        {
-          no: 2,
-          question: 'What is the input of the code?',
-          options: [
-            '4',
-            '3',
-            '2',
-            '1',
-          ],
-          isDisabled: false,
-        },
-        {
-          no: 3,
-          question: 'What is the input of the 3 code?',
-          options: [
-            '43',
-            '33',
-            '23',
-            '13',
-          ],
-          isDisabled: false,
-        }]),
+        [questions, setQuestions] = useState(...state.Exam),
         { no, question, options, isDisabled } = questions && questions[selectedQues - 1 || 0] || {},
         onChange = e => {
           const isAnswerd = selectedAns.find(e => e.quesNo === no);
@@ -128,11 +101,19 @@ const Instruction = (props) => {
     setSelectedRadioAns(isAnswerd?.answer);
   };
   const submitAnswer = () => {
+    const endTime = new Date().getTime();
     confirm({
       title: 'Do you want to submit the exam?',
       content: 'You can not change your answer after submitting',
       onOk() {
-        history.push(`submit/${userData._id}`);
+        const obj = { url: state.config.baseUrl + state.config.submitExam };
+        const data = { answers: selectedAns, userName: userData.username, examTime: state.ExamStartTime,
+          examEndTime: endTime };
+        APICallManager.postCall(obj, data, (res) => {
+          if (res.success) {
+            history.push(`/result/${userData._id}`);
+          }
+        });
       },
       onCancel() {},
     });
@@ -160,7 +141,7 @@ const Instruction = (props) => {
           <img src={download} alt="user" />
           <p className="d-flex flex-column mt-1">
             <span>Time Left</span>
-            <span>120 min : 00 sec</span>
+            <Timer initialMinute={120} />
             <span className="text-capitalize mt-1">{state?.userData?.username || 'Unamed'}</span>
           </p>
         </Box>
@@ -187,7 +168,8 @@ const Instruction = (props) => {
               const answered = selectedAns.find(e => e.quesNo === item.no);
               return <Button className={`m-2 ${(!answered && item.isVisited && 'exam-main__notAnswered') ||
               (answered && item.isDisabled && 'exam-main__answered') || (
-                answered && !item.isDisabled && 'exam-main__reviewAnswered')}`}
+                answered && !item.isDisabled && 'exam-main__reviewAnswered') ||
+                item.no === selectedQues && 'exam-main__selected'}`}
               key={key} onClick={() => openQuestion(item)}>
                 {item.no}
               </Button>;
@@ -214,4 +196,4 @@ const Instruction = (props) => {
   );
 };
 
-export default withProfile(Instruction);
+export default withProfile(Exam);

@@ -71,4 +71,8 @@
     background-color: gold !important;
     color: #ffffff !important;
   }
+
+  &__selected {
+    border: 1px solid black !important;
+  }
 }

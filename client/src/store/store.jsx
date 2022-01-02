@@ -6,6 +6,8 @@ import { getValue } from '../common/data_storage';
 
 const initialState = {
   userData: getValue('userData') || '',
+  Exam: [],
+  ExamStartTime: getValue('ExamStartTime') || '',
   routesUrl,
   config,
 };
