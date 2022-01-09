@@ -85,6 +85,9 @@ const Admin = (props) => {
                             Name
                 </TableCell>
                 <TableCell key="ContactsCell" component="th" scope="row" className="profile-main__labelHeading">
+                            Phone Number
+                </TableCell>
+                <TableCell key="ContactsCell" component="th" scope="row" className="profile-main__labelHeading">
                             File
                 </TableCell>
               </TableHead>
@@ -92,6 +95,7 @@ const Admin = (props) => {
                 {answer.map((item) => (
                   <><TableRow>
                     <TableCell component="th" scope="row" className="profile-main__labelHeading">{item.name}</TableCell>
+                    <TableCell component="th" scope="row" className="profile-main__labelHeading">{item.phoneNumber}</TableCell>
                     <TableCell className="span_div_text_color">
                       {/* eslint-disable-next-line jsx-a11y/anchor-has-content*/}
                       <Button className="btn btns" onClick={() => openAnswer(item.name, item.answers)}>Open Answers</Button>

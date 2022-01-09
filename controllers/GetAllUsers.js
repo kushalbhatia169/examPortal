@@ -15,12 +15,13 @@ class GetAllUsers {
             .then((users)=>{
                 const data = [];
                 users.map((item)=>{
-                    const { username, name } = item;
+                    const { username, name, phoneNumber } = item;
                     let filePath = path.resolve(__dirname, 'answer', `${username}.json`);
                     try {
                         const answer = fs.readFileSync(filePath, 'utf8');
                         return data.push({
                             name, 
+                            phoneNumber,
                             answers: answer
                         });
                     } catch (error) {
