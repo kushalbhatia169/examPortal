@@ -92,11 +92,12 @@
       @include sm {
         height: unset;
         flex-wrap: unset;
+
       }
     }
 
     @include sm {
-      margin-left: unset;
+      margin-left: 10rem;
     }
   }
 

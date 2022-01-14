@@ -7,6 +7,7 @@ class SaveAnswers {
         const answer = {};
         answer.userId = userId;
         answer.userAnswers = [...answers];
+        console.log(userId, answers)
         return await Answer.findOneAndUpdate({userId: userId},
             answer, { upsert: true }, (err) =>{
                 // Deal with the response data/error

@@ -19,8 +19,6 @@ class GetAllUsers {
                         return await Answer.find({userId: _id})
                             .populate('userId') // multiple path names in one requires mongoose >= 3.6
                             .then((answers) => {
-                                //!isEmpty(answers) && console.log(answers)
-                                console.log(_id.equals(answers[0]?.userId?._id))
                                 if(_id.equals(answers[0]?.userId?._id)) {
                                     !isEmpty(answers) && data.push(...answers);
                                     return data; // return the array of answers
@@ -35,7 +33,7 @@ class GetAllUsers {
                         return new Error(error);
                     }
                 }));
-                console.log(promises)
+                //console.log(promises[0].value)
                 return promises;
             })
             .catch(err => {return new Error(err) }) 

@@ -72,7 +72,7 @@ const Admin = (props) => {
     };
   }, []);
   const openAnswer = (name, fileContent) => {
-    dispatch({ type: 'studentAnswers', payload: [...JSON.parse(fileContent)] });
+    dispatch({ type: 'studentAnswers', payload: [...fileContent] });
     dispatch({ type: 'studentName', payload: name });
     history.push('/answer/' + name);
     //document.body.removeChild(element);
@@ -83,6 +83,15 @@ const Admin = (props) => {
     APICallManager.putCall(obj, data, async () => {});
   };
 
+  const onDelete = (id) => {
+    const obj = { url: state.config.baseUrl + '/deleteUser' };
+    const data = { id };
+    APICallManager.postCall(obj, data, async (res) => {
+      if (res.success) {
+        window.location.reload();
+      }
+    });
+  };
   return (
     <Box className="profile-main instruction-main">
       {children}
@@ -121,23 +130,40 @@ const Admin = (props) => {
               </colgroup>
               <TableHead key="ContactsHead" className="w-100">
                 <TableCell key="ContactsCell" component="th" scope="row" className="profile-main__labelHeading">
+                            UserName
+                </TableCell>
+                <TableCell key="ContactsCell" component="th" scope="row" className="profile-main__labelHeading">
                             Name
+                </TableCell>
+                <TableCell key="ContactsCell" component="th" scope="row" className="profile-main__labelHeading">
+                            Father Name
                 </TableCell>
                 <TableCell key="ContactsCell" component="th" scope="row" className="profile-main__labelHeading">
                             Phone Number
                 </TableCell>
                 <TableCell key="ContactsCell" component="th" scope="row" className="profile-main__labelHeading">
-                            File
+                            Answer
+                </TableCell>
+                <TableCell key="ContactsCell" component="th" scope="row" className="profile-main__labelHeading">
+                            Action
                 </TableCell>
               </TableHead>
               <TableBody key="ContactsBody">
                 {answer.map((item) => (
                   <><TableRow>
+                    <TableCell component="th" scope="row" className="profile-main__labelHeading">{item.username}</TableCell>
                     <TableCell component="th" scope="row" className="profile-main__labelHeading">{item.name}</TableCell>
+                    <TableCell component="th" scope="row" className="profile-main__labelHeading">{item.father_name}</TableCell>
                     <TableCell component="th" scope="row" className="profile-main__labelHeading">{item.phoneNumber}</TableCell>
                     <TableCell className="span_div_text_color">
                       {/* eslint-disable-next-line jsx-a11y/anchor-has-content*/}
-                      <Button className="btn btns" onClick={() => openAnswer(item.name, item.answers)}>Open Answers</Button>
+                      <Button className="btn btns" onClick={() => openAnswer(item.name, item.userAnswers)}>Open Answers</Button>
+                    </TableCell>
+                    <TableCell className="span_div_text_color">
+                      {/* eslint-disable-next-line jsx-a11y/anchor-has-content*/}
+                      <Button className="btn btns" onClick={() => onDelete(item.userId)}>
+                        Delete User
+                      </Button>
                     </TableCell>
                   </TableRow></>))}
               </TableBody>

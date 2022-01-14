@@ -7,6 +7,7 @@ const UserLogin = require('../controllers/UserLogin');
 const GetAllUsers = require('../controllers/GetAllUsers');
 const SetTestInfo = require('../controllers/SetTestInfo');
 const SaveAnswers = require('../controllers/SaveAnswers');
+const UserDeletion = require('../controllers/UserDeletion');
 const csv = require('csvtojson');
 const middleware = require("../middlewares");
 const GetSecurityQuestion = require('../controllers/GetSecurityQuestion');
@@ -152,35 +153,9 @@ router.put('/changePassword', async(req, res)=>{
     }
 });
 
-// router.get('/verify/:otp', async (req, res) => {
-//     console.log(req.params, otp)
-//     try {
-//         if(parseInt(req?.params?.otp) !== otp) {
-//             return res.status(200).json({
-//                 success:false, 
-//                 message:"Invalid otp",
-//             });
-//         }
-//         else if(parseInt(req?.params?.otp) === otp) {
-//             return res.status(201).json({
-//                 success: true,
-//                 message: 'Email verified successfully',
-//             });
-//         }
-//         else throw Error;
-//     } 
-//     catch (error) {
-//         return res.status(400).json({
-//             success: false,
-//             error,
-//             message: error.message,
-//         })
-//     }
-// });
-
 router.post('/getExam', middleware.isAuthorized, async (_req, res) => {
-    //const csvFilePath = path.resolve(__dirname, 'paper', 'mkl.csv');
-    const csvFilePath = path.resolve(__dirname, '..', 'paper', 'mkl.csv');
+    const csvFilePath = path.resolve(__dirname, 'paper', 'mkl.csv');
+    //const csvFilePath = path.resolve(__dirname, '..', 'paper', 'mkl.csv');
     const date = new Date().getTime();
     csv()
     .fromFile(csvFilePath)
@@ -263,7 +238,6 @@ router.get('/getAnswers', middleware.isAuthorized, async (req, res) => {
     const getAllUsers = new GetAllUsers;
     try {
         const status = await getAllUsers.getUsers(); 
-        console.log('266', status)
         if(status instanceof Error || isEmpty(status)) {
             console.log(status)
             return res.status(200).json({
@@ -273,18 +247,20 @@ router.get('/getAnswers', middleware.isAuthorized, async (req, res) => {
         }
         if(status) {
             const res_data = [];
-            status.forEach(user => {
-                if(!isEmpty(user?.value)){
-                    const sendData = {};
-                    const { userAnswers, userId } = user?.value[0];
-                    sendData.userAnswers = userAnswers;
-                    sendData.email = userId?.email;
-                    sendData.father_name = userId?.father_name;
-                    sendData.phoneNumber = userId?.phoneNumber;
-                    sendData.username = userId?.username;
-                    sendData.name = userId?.name;
-                    res_data.push(sendData);
-                } 
+            !isEmpty(status[0]?.value) && status[0]?.value?.map(user => {
+                console.log(user)
+                    const { userAnswers, userId } = user;
+                    console.log(userId?.username)
+                    return res_data.push({
+                        userAnswers : userAnswers,
+                        userId: userId?._id,
+                        email : userId?.email,
+                        father_name : userId?.father_name,
+                        phoneNumber : userId?.phoneNumber,
+                        username : userId?.username,
+                        name : userId?.name,
+                    });
+                // } 
             });
             return res.status(201).json({
                 success: true,
@@ -326,4 +302,32 @@ router.put('/setTestInfo', middleware.isAuthorized, async (req, res) => {
         })
     }
 });
+
+router.post('/deleteUser', middleware.isAuthorized, async (req, res) => {
+    const userDeletion = new UserDeletion;
+    try {
+        const status = await userDeletion.deleteUser(req.body.id);
+        if(status instanceof Error) {
+            return res.status(200).json({
+                status: false,
+                message: status.message,
+            });
+        }
+        if(status) {
+            return res.status(201).json({
+                success: true,
+                message: 'User deleted!',
+            })
+        }
+        else throw Error;
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            success: false,
+            error,
+            message: error.message,
+        })
+    }
+});
+
 module.exports = router
