@@ -15,7 +15,7 @@ const { confirm } = Modal;
 
 const Instruction = (props) => {
   const { state, dispatch } = useContext(context),
-        { userData } = state || {};
+        { userData, userData: { testInfo } } = state || {};
   if (!userData._id) {
     return <Redirect to="/login" />;
   }
@@ -60,9 +60,11 @@ const Instruction = (props) => {
         </Box>
         <Box className="instruction-main__body mt-5">
           <ul className="mt-3 ms-5">
-            <li className="mt-3" style={{ fontSize: 18 }}>Welcome to Online Exam Portal</li>
-            <li className="mt-3" style={{ fontSize: 18 }}>Exam has total 120 question</li>
-            <li className="mt-3" style={{ fontSize: 18 }}>Total time in Exam is 120 Minutes</li>
+            <li className="mt-3 text-capitalize" style={{ fontSize: 18 }}>
+              Welcome to {testInfo[0]?.TestName} Exam Portal.
+            </li>
+            <li className="mt-3" style={{ fontSize: 18 }}>Exam has total {testInfo[0]?.TestTime} question</li>
+            <li className="mt-3" style={{ fontSize: 18 }}>Total time in Exam is {testInfo[0]?.TestTime} Minutes</li>
             <li className="mt-3" style={{ fontSize: 18 }}>If you reload your exam will end without submission you will moved
             back to profile page.</li>
             <li className="mt-3" style={{ fontSize: 18 }}>Negative Marking Exam : <b style={{ fontSize: 20 }}>No</b></li>

@@ -16,7 +16,7 @@ const { confirm } = Modal;
 
 const Exam = (props) => {
   const { state } = useContext(context),
-        { userData } = state || {};
+        { userData, userData: { testInfo } } = state || {};
   if (state.Exam.length === 0) {
     return <Redirect to={`/profile/${userData._id}`} />;
   }
@@ -117,8 +117,8 @@ const Exam = (props) => {
 
   const apiCall = async (endTime) => {
     const obj = { url: state.config.baseUrl + state.config.submitExam };
-    const data = { answers: selectedAns, userName: userData.username, examTime: state.ExamStartTime,
-      examEndTime: endTime };
+    const data = { answers: selectedAns, examTime: state.ExamStartTime, examEndTime: endTime,
+      userId: userData._id, testTime: testInfo[0]?.TestTime };
     APICallManager.postCall(obj, data, async (res) => {
       if (res.success) {
         history.push(`/result/${userData._id}`);
@@ -138,17 +138,17 @@ const Exam = (props) => {
       <Box className="exam-main__body d-flex flex-wrap justify-content-between  ms-3 align-items-center">
         <Box>
           <span> Question Type | Single | </span>
-          <span> Marks | 1 | </span>
-          <span> Negative Marking | No</span>
+          <span> Marks | 1 </span>
+          {/* <span> Negative Marking | No</span> */}
         </Box>
         <Box>
-          <span> Time | 120 min</span>
+          <span> Time | {testInfo[0]?.TestTime} min</span>
         </Box>
         <Box className="exam-main__img me-2">
           <img src={download} alt="user" />
           <p className="d-flex flex-column mt-1">
             <span>Time Left</span>
-            <Timer initialMinute={120} submitAnswer={submitAnswer} />
+            <Timer initialMinute={testInfo[0]?.TestTime} submitAnswer={submitAnswer} />
             <span className="text-capitalize mt-1">{state?.userData?.username || 'Unamed'}</span>
           </p>
         </Box>

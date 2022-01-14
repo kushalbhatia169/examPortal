@@ -1,7 +1,6 @@
 const User = require('../models/User');
-// const { Error } = require('mongoose');
-const path = require('path');
-const fs = require('fs');
+const Answer = require('../models/Answer');
+const { isEmpty } = require('lodash');
 class GetAllUsers {
     async getUsers() {
         return await User.find({}, (err, users) => {
@@ -12,25 +11,32 @@ class GetAllUsers {
                 return new Error(`User not found`);
                 }
             })
-            .then((users)=>{
+            .then(async(users)=>{
                 const data = [];
-                users.map((item)=>{
-                    const { username, name, phoneNumber } = item;
-                    let filePath = path.resolve(__dirname, 'answer', `${username}.json`);
+                const promises = await Promise.allSettled(users.map(async (item)=>{
+                    const { _id } = item;
                     try {
-                        const answer = fs.readFileSync(filePath, 'utf8');
-                        return data.push({
-                            name, 
-                            phoneNumber,
-                            answers: answer
-                        });
-                    } catch (error) {
-                        console.log(error);
+                        return await Answer.find({userId: _id})
+                            .populate('userId') // multiple path names in one requires mongoose >= 3.6
+                            .then((answers) => {
+                                //!isEmpty(answers) && console.log(answers)
+                                console.log(_id.equals(answers[0]?.userId?._id))
+                                if(_id.equals(answers[0]?.userId?._id)) {
+                                    !isEmpty(answers) && data.push(...answers);
+                                    return data; // return the array of answers
+                                }
+                            })
+                            .catch(err => {
+                                return new Error(err);
+                            });
+                       
+                    } 
+                    catch (error) {
+                        return new Error(error);
                     }
-                    
-                    return item;
-                })
-                return data;
+                }));
+                console.log(promises)
+                return promises;
             })
             .catch(err => {return new Error(err) }) 
     }

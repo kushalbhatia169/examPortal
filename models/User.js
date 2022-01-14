@@ -10,7 +10,8 @@ const User = new Schema(
       unique:true, 
       required:[true, "can't be blank"], 
       match: [/^[0-9]+$/, 'is invalid'], 
-      index: true 
+      index: true,
+      ref: 'Answer',
     },
     username: {
       type: String, 
@@ -18,12 +19,14 @@ const User = new Schema(
       required: [true, "can't be blank"], 
       unique:true, 
       match: [/^[a-zA-Z0-9]+$/, 'is invalid'], 
-      index: true
+      index: true,
+      ref: 'Answer',
     },
     name: {
       type: String, 
       lowercase: true, 
       required: [true, "can't be blank"], 
+      ref: 'Answer',
       // match: [/^[a-zA-Z0-9]+$/, 'is invalid'], 
       // index: true
     },
@@ -39,6 +42,7 @@ const User = new Schema(
       type: String, 
       lowercase: true,
       required: [true, "can't be blank"], 
+      ref: 'Answer',
       // match: [/^[a-zA-Z0-9]+$/, 'is invalid'], 
       index: false
     },

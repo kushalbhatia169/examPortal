@@ -76,7 +76,7 @@ const APICallManager = {
         setTimeout(function() {
           resolve((async () => {
             await myApi
-              .post(obj.url, payload, { credecredentials: 'include' })
+              .post(obj.url, payload, { credentials: 'include' })
               .then(response => {
                 const response_data = response.data;
                 if (response_data.success) {
@@ -124,6 +124,12 @@ const APICallManager = {
                 const response_data = response.data;
                 if (response_data.success) {
                   callback(response_data);
+                  const message = response_data.message;
+                  webMessageData.webMessage = message;
+                  webMessageData.success = true;
+                  if (message) {
+                    ApiWebMessage({ ...webMessageData });
+                  }
                 }
                 else {
                   const message = response_data.message;
@@ -131,9 +137,8 @@ const APICallManager = {
                 }
                 $$('div').css('cursor', '');
               })
-              .catch((error) => {
-                const message = `${error}`;
-                webMessageData.webMessage = message;
+              .catch((e) => {
+                webMessageData.webMessage = e.message;
                 webMessageData.success = false;
                 ApiWebMessage({ ...webMessageData });
                 $$('div').css('cursor', '');

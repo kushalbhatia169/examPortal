@@ -55,6 +55,12 @@ export const useStyles = makeStyles(theme => ({
     color: '#76787A',
     fontSize: '14px',
   },
+  input_time: {
+    height: 40,
+    width: 100,
+    color: '#76787A',
+    fontSize: '14px',
+  },
   selectRoot: {
     height: 40,
     display: 'table',

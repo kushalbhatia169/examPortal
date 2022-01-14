@@ -10,7 +10,8 @@ import 'antd/dist/antd.css';
 
 const withProfileHoc = (WrappedComponent) => {
   const profileHoc = ({ ...props }) => {
-    const { dispatch } = useContext(context);
+    const { state, dispatch } = useContext(context);
+    const { userData: { testInfo } } = state || {};
     const history = useHistory();
     const handleMenuClick = () => {
       message.info('User successfully logged out.');
@@ -29,7 +30,7 @@ const withProfileHoc = (WrappedComponent) => {
     return (
       <WrappedComponent {...{ props }}>
         <Box className="profile-main__head">
-          <h1>Online Exam Portal</h1>
+          <h1 className="text-capitalize">{testInfo[0].TestName || 'Online'} Exam Portal</h1>
           <Space wrap className="mb-3 me-2">
             <Dropdown overlay={menu}>
               <Button>

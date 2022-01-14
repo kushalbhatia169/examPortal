@@ -1,5 +1,5 @@
 const User = require('../models/User');
-//const { Error } = require('mongoose');
+const TestInfo = require('../models/TestInfo');
 const {generateJWT} = require('../utils/Jwt');
 const {validateHashPassword} = require('../utils/hashPassword');
 
@@ -17,13 +17,26 @@ class UserLogin {
           return new Error(`user not found`);
         }
         return (async() => {
+          const testInfo = new TestInfo();
           const isPasswordValid = await validateHashPassword(password, user?.salt, user?.hash);
           if(!isPasswordValid) return new Error('incorrect user/password');
           const jwToken = await generateJWT(user);
           const result = {};
           result["x-auth-token"] = jwToken;
           result["user"] = user;
-          return result;
+          return await TestInfo.find({}, err => {
+            if(err) {
+              return new Error(err);
+            };
+          })
+          .then((tinfo)=>{
+            result["testInfo"] = tinfo;
+            return result;
+          })
+          .catch(err => {
+            return new Error(err);
+          });
+          //return result;
         })();
       })
       .catch((e)=>{

@@ -1,40 +1,60 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Box, Table, TableBody, TableRow, TableCell, TableContainer, TableHead } from '@mui/material';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { Box, Table, TableBody, TableRow, TableCell, TableContainer, TableHead, Button } from '@mui/material';
+import TextFieldsComponent from '../../common/text_field/text_field';
 import { Link, useHistory } from 'react-router-dom';
+import { useStyles } from '../../style_jsx/styles';
+import { useForm } from 'react-hook-form';
 // import DownloadIcon from '@mui/icons-material/Download';
-import { Upload, message, Button } from 'antd';
+import { Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { context } from '../../store/store';
 import '../profile/profile.scss';
 import 'antd/dist/antd.css';
 import '../instruction/instruction.scss';
+import { NumberOutlined, EditOutlined } from '@ant-design/icons';
 import { getCookie } from '../../common/globalCookies';
 import withProfile from '../../common/profile_hoc/with_profie_hoc';
 import APICallManager from '../../services/api_manager';
 
 const Admin = (props) => {
   const { state, dispatch } = useContext(context),
+        classes = useStyles(),
         { userData } = state || {},
         history = useHistory(),
-        [answer, setAnswer] = useState([]);
-  const [_isMounted, _setIsMounted] = useState(true);
-  const { children } = props;
-  const fileProps = {
-    name: 'mkl',
-    action: state.config.baseUrl + state.config.uploadFile,
-    headers: {
-      authorization: 'authorization-text',
-      cookies: getCookie('token'),
-    },
-    onChange(info) {
-      if (info.file.status === 'done') {
-        message.success(`${info.file.name} file uploaded successfully`);
-      }
-      else if (info.file.status === 'error') {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
+        [answer, setAnswer] = useState([]),
+        [_isMounted, _setIsMounted] = useState(true),
+        { children } = props,
+        [fields, setFields] = useState({
+          testName: '',
+          testTime: '',
+        }),
+        { register, formState: { errors }, handleSubmit } = useForm({ reValidateMode: 'onBlur' }),
+        { testName, testTime } = fields,
+        setStateData = useCallback(async (stateName, value) => {
+          let stateValue = value;
+          if (stateName === 'testTime') {
+            stateValue = stateValue.replace(/[^\d]/g, '');
+          }
+          setFields((prevState) => ({
+            ...prevState,
+            [stateName]: stateValue }));
+        }, []),
+        fileProps = {
+          name: 'mkl',
+          action: state.config.baseUrl + state.config.uploadFile,
+          headers: {
+            authorization: 'authorization-text',
+            cookies: getCookie('token'),
+          },
+          onChange(info) {
+            if (info.file.status === 'done') {
+              message.success(`${info.file.name} file uploaded successfully`);
+            }
+            else if (info.file.status === 'error') {
+              message.error(`${info.file.name} file upload failed.`);
+            }
+          },
+        };
 
   useEffect(() => {
     if (_isMounted) {
@@ -57,6 +77,11 @@ const Admin = (props) => {
     history.push('/answer/' + name);
     //document.body.removeChild(element);
   };
+  const onSubmit = () => {
+    const obj = { url: state.config.baseUrl + state.config.setTestInfo };
+    const data = { TestName: testName, TestTime: parseInt(testTime) };
+    APICallManager.putCall(obj, data, async () => {});
+  };
 
   return (
     <Box className="profile-main instruction-main">
@@ -68,10 +93,24 @@ const Admin = (props) => {
         <Box>
 
         </Box>
-        <Box className="instruction-main__body mt-5 d-flex justify-content-center">
+        <Box className="instruction-main__body mt-5 d-flex flex-column align-items-center">
           <Upload {...fileProps}>
             <Button icon={<UploadOutlined />}>Click to Upload Exam Paper</Button>
           </Upload>
+          <form className="p-3" onSubmit={handleSubmit(() => onSubmit())}>
+            <Box className="d-flex flex-wrap flex-column align-items-center">
+              <TextFieldsComponent {...{ classes, label: 'Test Name', icon: <EditOutlined />, required: true,
+                value: testName, setValue: setStateData, name: 'testName', register, errors }} />
+              <Box className="mt-3">
+                <TextFieldsComponent {...{ classes, classnames: classes.input_time, label: 'Time In Minutes', icon: <NumberOutlined />,
+                  required: true, value: testTime, setValue: setStateData, name: 'testTime',
+                  register, errors, maxLength: 3 }} />
+                <Button type="submit" class="btn btns ms-3" variant="outlined" title="Submit">
+                Submit
+                </Button>
+              </Box>
+            </Box>
+          </form>
         </Box>
         <Box className="profile-main__content w-100">
           <TableContainer component={Box}>

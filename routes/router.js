@@ -5,11 +5,10 @@ const path = require('path');
 const UserRegistration = require('../controllers/UserRegistration');
 const UserLogin = require('../controllers/UserLogin');
 const GetAllUsers = require('../controllers/GetAllUsers');
-const fs = require('fs');
+const SetTestInfo = require('../controllers/SetTestInfo');
+const SaveAnswers = require('../controllers/SaveAnswers');
 const csv = require('csvtojson');
-const sendEmail = require("../utils/email");
 const middleware = require("../middlewares");
-const root = require('rootrequire');
 const GetSecurityQuestion = require('../controllers/GetSecurityQuestion');
 const ChangePassword = require('../controllers/ChangePassword');
 const router = express.Router();
@@ -80,7 +79,7 @@ router.get('/login', middleware.isAuthenticated, async(req, res) => {
                 success: true, 
                 message:"User logged in", 
                 data: {_id, username, name, phoneNumber, email, father_name, address , age,
-                    course, jwt: status["x-auth-token"]}
+                    course, jwt: status["x-auth-token"], testInfo: status.testInfo}
             })
         }
         else {
@@ -180,7 +179,8 @@ router.put('/changePassword', async(req, res)=>{
 // });
 
 router.post('/getExam', middleware.isAuthorized, async (_req, res) => {
-    const csvFilePath = path.resolve(__dirname, 'paper', 'mkl.csv');
+    //const csvFilePath = path.resolve(__dirname, 'paper', 'mkl.csv');
+    const csvFilePath = path.resolve(__dirname, '..', 'paper', 'mkl.csv');
     const date = new Date().getTime();
     csv()
     .fromFile(csvFilePath)
@@ -202,26 +202,49 @@ router.post('/getExam', middleware.isAuthorized, async (_req, res) => {
 
 router.post('/submitExam', middleware.isAuthorized, async (req, res) => {
     try {
-        const { userName, answers, examTime, examEndTime } = req.body;
+        const { userId, answers, examTime, examEndTime, testTime } = req.body;
         if(examTime) {
             const totalExamTime = examEndTime - examTime;
             const totalTime = totalExamTime / 1000;
             const minutes = Math.floor(totalTime / 60);
-            if(minutes > 120) {
+            if(minutes > testTime) {
                 return res.status(200).json({
                     success: false,
                     message: 'Exam time exceeded!',
                 });
             }
             else {
-                fs.writeFileSync(path.resolve(__dirname, 'answer', `${userName}.json`), 
-                JSON.stringify(answers));
-                return res.status(201).json({
-                    success: true,
-                });
+                const saveAnswers =  new SaveAnswers();
+                const status = await saveAnswers.saveAnswers(userId, answers);
+                try {
+                    if(status instanceof Error) {
+                        return res.status(200).json({
+                            success: false,
+                            message: status.message,
+                        })
+                    }
+                    if(status) {
+                        return res.status(201).json({
+                            success: true,
+                            message: 'Exam submitted successfully!',
+                        })
+                    }
+                    else {
+                        throw Error;
+                    }
+                } 
+                catch (error) {
+                    console.log(error)
+                    return res.status(400).json({
+                        success: false,
+                        error,
+                        message: error.message,
+                    })
+                };
             }
         }
     } catch (error) {
+        console.log(error);
         return res.status(400).json({
             success: false,
             error,
@@ -240,17 +263,32 @@ router.get('/getAnswers', middleware.isAuthorized, async (req, res) => {
     const getAllUsers = new GetAllUsers;
     try {
         const status = await getAllUsers.getUsers(); 
+        console.log('266', status)
         if(status instanceof Error || isEmpty(status)) {
             console.log(status)
             return res.status(200).json({
                 status: false,
-                message: status.message,
+                message: status?.message,
             });
         }
         if(status) {
+            const res_data = [];
+            status.forEach(user => {
+                if(!isEmpty(user?.value)){
+                    const sendData = {};
+                    const { userAnswers, userId } = user?.value[0];
+                    sendData.userAnswers = userAnswers;
+                    sendData.email = userId?.email;
+                    sendData.father_name = userId?.father_name;
+                    sendData.phoneNumber = userId?.phoneNumber;
+                    sendData.username = userId?.username;
+                    sendData.name = userId?.name;
+                    res_data.push(sendData);
+                } 
+            });
             return res.status(201).json({
                 success: true,
-                data: [...status],
+                data: [...res_data],
             })
         }
     } catch (error) {
@@ -262,4 +300,30 @@ router.get('/getAnswers', middleware.isAuthorized, async (req, res) => {
     }
 });
 
+router.put('/setTestInfo', middleware.isAuthorized, async (req, res) => {
+    const testInfo = new SetTestInfo;
+    try {
+        const status = await testInfo.createTestInfo(req.body);
+        if(status instanceof Error) {
+            return res.status(200).json({
+                status: false,
+                message: status.message,
+            });
+        }
+        if(status) {
+            return res.status(201).json({
+                success: true,
+                message: 'Test info updated!',
+            })
+        }
+        else throw Error;
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({
+            success: false,
+            error,
+            message: error.message,
+        })
+    }
+});
 module.exports = router
