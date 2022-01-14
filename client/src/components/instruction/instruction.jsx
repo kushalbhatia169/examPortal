@@ -63,7 +63,7 @@ const Instruction = (props) => {
             <li className="mt-3 text-capitalize" style={{ fontSize: 18 }}>
               Welcome to {testInfo[0]?.TestName} Exam Portal.
             </li>
-            <li className="mt-3" style={{ fontSize: 18 }}>Exam has total {testInfo[0]?.TestTime} question</li>
+            <li className="mt-3" style={{ fontSize: 18 }}>You have total {testInfo[0]?.TestTime} minutes</li>
             <li className="mt-3" style={{ fontSize: 18 }}>Total time in Exam is {testInfo[0]?.TestTime} Minutes</li>
             <li className="mt-3" style={{ fontSize: 18 }}>If you reload your exam will end without submission you will moved
             back to profile page.</li>
