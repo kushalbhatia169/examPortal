@@ -4,6 +4,7 @@ import TextFieldsComponent from '../../common/text_field/text_field';
 import { Link, useHistory } from 'react-router-dom';
 import { useStyles } from '../../style_jsx/styles';
 import { useForm } from 'react-hook-form';
+import { Button as Ant_Button } from 'antd';
 // import DownloadIcon from '@mui/icons-material/Download';
 import { Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
@@ -104,7 +105,7 @@ const Admin = (props) => {
         </Box>
         <Box className="instruction-main__body mt-5 d-flex flex-column align-items-center">
           <Upload {...fileProps}>
-            <Button icon={<UploadOutlined />}>Click to Upload Exam Paper</Button>
+            <Ant_Button icon={<UploadOutlined />}>Click to Upload Exam Paper</Ant_Button>
           </Upload>
           <form className="p-3" onSubmit={handleSubmit(() => onSubmit())}>
             <Box className="d-flex flex-wrap flex-column align-items-center">
@@ -124,10 +125,6 @@ const Admin = (props) => {
         <Box className="profile-main__content w-100">
           <TableContainer component={Box}>
             <Table key="ContactsTable" className="table w-100 mt-3 table-responsive-sm">
-              <colgroup>
-                <col span="1" style={{ 'width': '50%' }} />
-                <col span="1" style={{ 'width': '50%' }} />
-              </colgroup>
               <TableHead key="ContactsHead" className="w-100">
                 <TableCell key="ContactsCell" component="th" scope="row" className="profile-main__labelHeading">
                             UserName
